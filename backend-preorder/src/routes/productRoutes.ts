@@ -1,20 +1,35 @@
 import express from 'express';
 import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import { createProduct, deleteProduct, getActiveBatchSchedule, getProducts, updateProduct, uploadProductImage } from '../controllers/productController.js';
 import { verifyToken } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, 'uploads/'),
-  filename: (_req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = file.originalname.split('.').pop();
-    cb(null, `productImage-${uniqueSuffix}.${ext}`);
-  }
+// 1. Konfigurasi Kunci Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME as string,
+  api_key: process.env.CLOUDINARY_API_KEY as string,
+  api_secret: process.env.CLOUDINARY_API_SECRET as string
 });
 
-const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
+// 2. Penyimpanan Foto Produk ke Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    return {
+      folder: 'hipud_products', // Folder khusus produk
+      format: 'png',
+      public_id: `productImage-${Date.now()}-${Math.round(Math.random() * 1E9)}`,
+    };
+  },
+});
+
+const upload = multer({ 
+  storage: storage, 
+  limits: { fileSize: 5 * 1024 * 1024 } 
+});
 
 router.get('/', getProducts);
 router.get('/schedule/active', getActiveBatchSchedule);

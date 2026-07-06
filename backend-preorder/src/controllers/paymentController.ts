@@ -4,7 +4,6 @@ import prisma from '../config/database.js';
 // Fitur Mengunggah Bukti Pembayaran
 export const createPayment = async (req: Request, res: Response): Promise<any> => {
   try {
-    // 1. Menerima data dari form (orderId dari frontend berisi Invoice "INV-XXX")
     const invoiceNumber = req.body.orderId; 
     const file = req.file;
 
@@ -12,7 +11,6 @@ export const createPayment = async (req: Request, res: Response): Promise<any> =
       return res.status(400).json({ message: "File bukti pembayaran tidak ditemukan!" });
     }
 
-    // 2. Cari pesanan asli berdasarkan Invoice Number
     const order = await prisma.order.findFirst({
       where: { invoiceNumber: invoiceNumber }
     });
@@ -21,9 +19,9 @@ export const createPayment = async (req: Request, res: Response): Promise<any> =
       return res.status(404).json({ message: "Pesanan dengan invoice tersebut tidak ditemukan." });
     }
 
-    const imageUrl = `/uploads/${file.filename}`;
+    // PERBAIKAN: Langsung ambil URL lengkap dari Cloudinary
+    const imageUrl = file.path; 
 
-    // 3. Simpan bukti transfer ke tabel Payment menggunakan ID asli
     const newPayment = await prisma.payment.create({
       data: {
         orderId: order.id,
@@ -31,20 +29,12 @@ export const createPayment = async (req: Request, res: Response): Promise<any> =
       }
     });
 
-    // 4. Update tabel Order agar frontend Admin bisa membaca foto dan statusnya
     await prisma.order.update({
       where: { id: order.id },
-      data: { 
-        proofImage: imageUrl // Simpan URL gambar di tabel Order agar mudah dibaca Admin
-        // Catatan: Status tetap PENDING agar Admin bisa melakukan verifikasi manual
-      }
+      data: { proofImage: imageUrl }
     });
 
-    res.status(201).json({ 
-      success: true,
-      message: "Bukti pembayaran berhasil dikirim!", 
-      data: newPayment 
-    });
+    res.status(201).json({ success: true, message: "Bukti pembayaran berhasil dikirim!", data: newPayment });
   } catch (error) {
     console.error("Gagal memproses pembayaran:", error);
     res.status(500).json({ message: "Gagal memproses pembayaran", error });

@@ -1,31 +1,37 @@
 import express from 'express';
 import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import { createPayment, getPayments, deletePayment } from '../controllers/paymentController.js';
 import { verifyToken } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-// KONFIGURASI MULTER (PENERJEMAH FILE)
-const storage = multer.diskStorage({
-  // Tentukan folder tempat foto disimpan
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Pastikan folder 'uploads' sudah dibuat secara manual!
+// 1. Konfigurasi Kunci Cloudinary (Menggunakan 'as string' untuk mengatasi error TypeScript)
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME as string,
+  api_key: process.env.CLOUDINARY_API_KEY as string,
+  api_secret: process.env.CLOUDINARY_API_SECRET as string
+});
+
+// 2. Multer diarahkan untuk menyimpan file ke Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    return {
+      folder: 'hipud_payments', // Nama folder di Cloudinary
+      format: 'png', 
+      public_id: Date.now() + '-' + Math.round(Math.random() * 1E9),
+    };
   },
-  // Buat nama file unik agar tidak saling timpa
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = file.originalname.split('.').pop(); 
-    cb(null, file.fieldname + '-' + uniqueSuffix + '.' + ext);
-  }
 });
 
 const upload = multer({ 
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 } // Batas 5MB
+  limits: { fileSize: 5 * 1024 * 1024 } // Batas maksimal 5MB
 });
 
 // PINTU TERBUKA (Publik / Pembeli)
-// Gunakan upload.single('proofImage') untuk menangkap file
 router.post('/', upload.single('proofImage'), createPayment);
 
 // PINTU TERGEMBOK (Hanya Admin)

@@ -10,17 +10,23 @@ import reviewRoutes from './routes/reviewRoutes.js';
 import { initCronJobs } from './services/cronService.js';
 
 const app = express();
-const PORT = 5000;
+// WAJIB UNTUK RENDER: Menggunakan PORT dinamis dari environment
+const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// PENGATURAN CORS: Mengizinkan Vercel untuk mengakses API ini
+app.use(cors({
+  origin: '*', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 app.use(express.json());
 
-// BUKA PINTU UNTUK FOLDER UPLOADS
-// Baris ini membuat file gambar bisa diakses dari URL: http://localhost:5000/uploads/namafile.png
+// BUKA PINTU UNTUK FOLDER UPLOADS (Sementara tetap ada sebelum Cloudinary aktif)
 app.use('/uploads', express.static('uploads')); 
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Halo! Server Backend Sistem PO UMKM sudah berhasil berjalan! 🚀');
+  res.send('Halo! Server Backend Sistem PO UMKM sudah berhasil berjalan di Cloud! 🚀');
 });
 
 app.use('/api/products', productRoutes);
@@ -33,7 +39,7 @@ initCronJobs();
 
 app.listen(PORT, () => {
   console.log(`=========================================`);
-  console.log(`🚀 Server berjalan di: http://localhost:${PORT}`);
+  console.log(`🚀 Server berjalan di: Port ${PORT}`);
   console.log(`🕒 Mesin Pembersih Otomatis (Cron Job) AKTIF!`);
   console.log(`=========================================`);
 });

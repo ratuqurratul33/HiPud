@@ -162,7 +162,10 @@ export const uploadProductImage = async (req: Request, res: Response): Promise<a
   try {
     const file = req.file;
     if (!file) return res.status(400).json({ success: false, message: 'File gambar tidak ditemukan' });
-    const imageUrl = `/uploads/${file.filename}`;
+    
+    // PERBAIKAN: Langsung ambil URL lengkap dari Cloudinary
+    const imageUrl = file.path; 
+    
     res.status(201).json({ success: true, imageUrl });
   } catch (error) {
     console.error('Gagal upload gambar produk:', error);
