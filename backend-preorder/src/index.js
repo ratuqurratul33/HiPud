@@ -12,7 +12,7 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 // BUKA PINTU UNTUK FOLDER UPLOADS
-// Baris ini membuat file gambar bisa diakses dari URL: http://localhost:5000/uploads/namafile.png
+// Baris ini membuat file gambar bisa diakses dari URL: http://https://hi-pud.vercel.app/https://hi-pud.vercel.app//uploads/namafile.png
 app.use('/uploads', express.static('uploads'));
 app.get('/', (req, res) => {
     res.send('Halo! Server Backend Sistem PO UMKM sudah berhasil berjalan! 🚀');
