@@ -158,7 +158,7 @@ const Checkout = () => {
       const response = await api.post('/orders', orderPayload);
       const resData = response.data.data;
       clearCart();
-      navigate('/payment', { state: { invoiceNumber: resData.invoiceNumber, dpAmount: resData.dpAmount || dpAmount, customerName: formData.customerName } });
+      navigate('/payment', { state: { invoiceNumber: resData.invoiceNumber, dpAmount: resData.dpAmount || dpAmount, customerName: formData.customerName, orderDate: resData.createdAt || new Date().toISOString() } });
     } catch (error) {
       console.error('Gagal membuat pesanan:', error);
       Swal.fire({
@@ -290,3 +290,4 @@ const Checkout = () => {
 };
 
 export default Checkout;
+

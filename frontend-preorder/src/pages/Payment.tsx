@@ -8,7 +8,7 @@ import QRImage from '../assets/QR.png';
 const Payment = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { invoiceNumber, dpAmount, customerName } = location.state || {};
+  const { invoiceNumber, dpAmount, customerName, orderDate } = location.state || {};
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -82,6 +82,7 @@ const Payment = () => {
             {isSuccess ? <CheckCircle className="mx-auto mb-4 text-[#f48fb1]" size={50} /> : <Receipt className="mx-auto mb-4 text-[#f48fb1]" size={50} />}
             <h1 className="font-display text-[clamp(1.75rem,8vw,2.25rem)] font-black leading-tight">{isSuccess ? 'Bukti Pembayaran Terkirim' : 'Konfirmasi Pembayaran'}</h1>
             <p className="mt-2 text-[#8a7c82]">Invoice <b>{invoiceNumber}</b></p>
+            <p className="mt-1 text-sm text-[#8a7c82]">Tanggal pemesanan: <b>{orderDate ? new Date(orderDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}</b></p>
           </div>
 
           {isSuccess ? (
@@ -100,12 +101,12 @@ const Payment = () => {
               </div>
               <div className="rounded-[1.2rem] bg-white/70 p-4 text-center sm:p-5">
                 <p className="mb-4 text-xs font-black uppercase tracking-[.2em] text-[#8a7c82]">Scan QRIS Berikut</p>
-                <div className="mx-auto grid h-36 w-36 place-items-center rounded-2xl bg-white shadow-inner sm:h-40 sm:w-40">
-                  <img src={QRImage} alt="QRIS Hi Pud" className="h-28 w-28 object-contain sm:h-32 sm:w-32" />
+                <div className="mx-auto grid h-44 w-44 place-items-center rounded-2xl bg-white shadow-inner sm:h-52 sm:w-52">
+                  <img src={QRImage} alt="QRIS Hi Pud" className="h-36 w-36 object-contain sm:h-44 sm:w-44" />
                 </div>
                 <p className="mt-5 text-sm text-[#8a7c82]">Atau transfer manual ke:</p>
-                <p className="font-black text-[#3f2e35]">BCA 123-456-7890</p>
-                <p className="text-sm text-[#8a7c82]">A/N: Hi Pud</p>
+                <p className="font-black text-[#3f2e35]">BCA 376138556</p>
+                <p className="text-sm text-[#8a7c82]">A/N: An Ratu</p>
               </div>
               <div>
                 <label className="hipud-label">Upload Bukti Transfer *</label>
@@ -124,3 +125,4 @@ const Payment = () => {
 };
 
 export default Payment;
+
