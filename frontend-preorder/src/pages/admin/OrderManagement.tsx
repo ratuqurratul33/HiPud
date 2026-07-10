@@ -94,6 +94,7 @@ const orderStatusLabel = (status: Order['status']) => {
 
 const pickupMethodLabel = (method?: string | null) => {
   if (method === 'danus') return 'Danus';
+  if (method === 'stand_kencana') return 'Ambil Stand Kencana';
   return 'Pribadi';
 };
 

@@ -1,9 +1,11 @@
 import prisma from '../config/database.js';
 import { buildReceiptPDF } from '../services/pdfService.js';
 const ORDER_STATUSES = ['PENDING', 'DIPROSES', 'SELESAI', 'DIBATALKAN'];
-const PICKUP_METHODS = ['danus', 'pribadi'];
+const PICKUP_METHODS = ['danus', 'pribadi', 'stand_kencana'];
 const DANUS_DELIVERY_TIME = '10:00-11:00';
+const STAND_KENCANA_TIME = 'Maksimal 08:00';
 const PRODUCTION_ADDRESS = 'Rumah produksi Hi Pud - Komplek Duta Family C3, Parakanmuncang';
+const STAND_KENCANA_ADDRESS = 'Stand Kencana - Jl. Teratai Raya Blok 9, depan Soto Rawon Kencana, Rancaekek';
 const orderInclude = {
     items: {
         include: {
@@ -109,7 +111,7 @@ export const createOrder = async (req, res) => {
         if (!isPickupMethod(pickupMethod)) {
             return res.status(400).json({
                 success: false,
-                message: 'Metode pengambilan hanya boleh Danus atau Pribadi.'
+                message: 'Metode pengambilan hanya boleh Danus, Pribadi, atau Ambil Stand Kencana.'
             });
         }
         if (!pickupDate) {
@@ -195,11 +197,23 @@ export const createOrder = async (req, res) => {
                 invoiceNumber,
                 customerName,
                 whatsappNumber,
-                address: pickupMethod === 'danus' ? `Danus - ${faculty}: ${pickupLocation}` : (address || PRODUCTION_ADDRESS),
+                address: pickupMethod === 'danus'
+                    ? `Danus - ${faculty}: ${pickupLocation}`
+                    : pickupMethod === 'stand_kencana'
+                        ? STAND_KENCANA_ADDRESS
+                        : (address || PRODUCTION_ADDRESS),
                 pickupMethod,
                 pickupDate: selectedPickupDate,
-                pickupTime: pickupMethod === 'danus' ? DANUS_DELIVERY_TIME : null,
-                pickupLocation: pickupMethod === 'danus' ? pickupLocation : PRODUCTION_ADDRESS,
+                pickupTime: pickupMethod === 'danus'
+                    ? DANUS_DELIVERY_TIME
+                    : pickupMethod === 'stand_kencana'
+                        ? STAND_KENCANA_TIME
+                        : null,
+                pickupLocation: pickupMethod === 'danus'
+                    ? pickupLocation
+                    : pickupMethod === 'stand_kencana'
+                        ? STAND_KENCANA_ADDRESS
+                        : PRODUCTION_ADDRESS,
                 faculty: pickupMethod === 'danus' ? faculty : null,
                 notes: notes || null,
                 totalAmount,

@@ -38,37 +38,55 @@ const CustomerReviews = ({ productId }: { productId?: number }) => {
     return reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
   }, [reviews]);
 
-  const renderStars = (rating: number) => <div className="flex gap-1">{[1, 2, 3, 4, 5].map((star) => <Star key={star} size={16} className={star <= rating ? 'fill-amber-400 text-amber-400' : 'fill-pink-100 text-pink-100'} />)}</div>;
+  const renderStars = (rating: number) => (
+    <div className="flex gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <Star key={star} size={15} className={star <= rating ? 'fill-amber-400 text-amber-400' : 'fill-pink-100 text-pink-100'} />
+      ))}
+    </div>
+  );
 
   return (
     <div>
-      <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+      <div className="mb-3 flex flex-col justify-between gap-3 md:mb-5 md:flex-row md:items-end">
         <div>
-          <p className="mb-3 text-sm font-black uppercase tracking-[.25em] text-[#f48fb1]">Social Proof</p>
-          <h2 className="font-display text-3xl font-black md:text-4xl">Apa Kata Mereka Tentang Hipud?</h2>
-          <p className="mt-4 max-w-2xl text-[#8a7c82]">Cerita manis dari pelanggan yang sudah mencoba menu Hipud.</p>
+          <p className="mb-1 text-[10px] font-black uppercase tracking-[.18em] text-[#f48fb1] sm:text-xs">Social Proof</p>
+          <h2 className="font-display text-xl font-black leading-tight sm:text-2xl md:text-3xl">Apa Kata Mereka Tentang Hipud?</h2>
+          <p className="mt-2 hidden max-w-2xl text-sm leading-6 text-[#8a7c82] md:block">Cerita manis dari pelanggan yang sudah mencoba menu Hipud.</p>
         </div>
-        <div className="glass-card rounded-[1.5rem] px-6 py-4"><p className="font-display text-3xl font-black text-[#f48fb1]">{reviews.length > 0 ? `${avgRating.toFixed(1)}/5` : '-'}</p><p className="text-sm font-bold text-[#8a7c82]">Rating pelanggan</p></div>
+        {!loading && reviews.length > 0 && (
+          <div className="glass-card w-fit rounded-[1rem] px-4 py-2 md:rounded-[1.2rem] md:px-5 md:py-3">
+            <p className="font-display text-xl font-black text-[#f48fb1] md:text-2xl">{avgRating.toFixed(1)}/5</p>
+            <p className="text-sm font-bold text-[#8a7c82]">{reviews.length} ulasan</p>
+          </div>
+        )}
       </div>
-      {loading ? <div className="py-10 text-center text-[#8a7c82]">Memuat ulasan...</div> : null}
+
+      {loading ? <div className="py-5 text-center text-sm font-bold text-[#8a7c82]">Memuat ulasan...</div> : null}
+
       {!loading && reviews.length === 0 ? (
-        <div className="rounded-[2rem] bg-white/70 p-10 text-center text-[#8a7c82]">Belum ada ulasan yang dipublikasikan.</div>
-      ) : (
-        <div className="grid gap-6 md:grid-cols-3">
-        {reviews.map((review) => (
-          <article key={review.id} className="glass-card relative overflow-hidden rounded-[2rem] p-6">
-            <Quote className="absolute -right-2 -top-2 text-[#f8dce8]" size={78} />
-            {renderStars(review.rating)}
-            <p className="mt-5 min-h-[96px] text-sm italic leading-relaxed text-[#6d5963]">“{review.comment}”</p>
-            {review.product && <span className="mt-4 inline-block rounded-full bg-[#ddefff] px-3 py-1 text-xs font-black text-[#50606e]">Review: {review.product.name}</span>}
-            <div className="mt-5 flex items-center gap-3 border-t border-pink-100 pt-4">
-              <UserCircle className="text-[#f48fb1]" size={38} />
-              <div><p className="font-black text-[#3f2e35]">{review.isAnonymous ? 'Anonymous' : review.customerName}</p><p className="text-xs text-[#8a7c82]">{new Date(review.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p></div>
-            </div>
-          </article>
-        ))}
+        <div className="rounded-[1rem] bg-white/70 px-4 py-4 text-center text-sm font-bold text-[#8a7c82]">Belum ada ulasan yang dipublikasikan.</div>
+      ) : null}
+
+      {!loading && reviews.length > 0 ? (
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {reviews.map((review) => (
+            <article key={review.id} className="glass-card relative overflow-hidden rounded-[1rem] p-3 sm:rounded-[1.35rem] sm:p-5">
+              <Quote className="absolute -right-2 -top-2 text-[#f8dce8]" size={46} />
+              {renderStars(review.rating)}
+              <p className="mt-3 text-sm italic leading-relaxed text-[#6d5963]">"{review.comment}"</p>
+              {review.product && <span className="mt-4 inline-block rounded-full bg-[#ddefff] px-3 py-1 text-xs font-black text-[#50606e]">Review: {review.product.name}</span>}
+              <div className="mt-3 flex items-center gap-3 border-t border-pink-100 pt-3">
+                <UserCircle className="shrink-0 text-[#f48fb1]" size={34} />
+                <div className="min-w-0">
+                  <p className="truncate font-black text-[#3f2e35]">{review.isAnonymous ? 'Anonymous' : review.customerName}</p>
+                  <p className="text-xs text-[#8a7c82]">{new Date(review.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

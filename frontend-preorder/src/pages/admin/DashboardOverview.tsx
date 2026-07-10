@@ -205,7 +205,7 @@ const DashboardOverview = () => {
             <div>
               <p className="text-base font-black text-[#3f2e35]">Jadwal PO & Danus</p>
               <p className="mt-2 text-sm font-medium leading-relaxed text-[#8a7c82]">
-                Online order mengikuti batch produk yang aktif di Kelola Produk. Untuk pickup pribadi, arahkan pelanggan ke rumah produksi.
+                Online order mengikuti batch produk yang aktif di Kelola Produk. Untuk pickup pribadi arahkan pelanggan ke rumah produksi, atau Stand Kencana maksimal jam 8 pagi.
               </p>
               <p className="mt-4 inline-flex items-start gap-2 rounded-2xl bg-white/60 px-4 py-3 text-sm font-black text-[#6d5963]">
                 <MapPin size={17} className="mt-0.5 shrink-0 text-[#f48fb1]" />

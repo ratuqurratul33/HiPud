@@ -188,10 +188,10 @@ const ReviewForm = ({
   };
 
   return (
-    <div className="glass-card mx-auto rounded-[2rem] p-6 text-left md:p-8">
+    <div className="glass-card mx-auto rounded-[1rem] p-3 text-left sm:rounded-[1.5rem] sm:p-5 md:p-6">
       <form
         onSubmit={handleSubmit}
-        className="space-y-5"
+        className="space-y-3 md:space-y-4"
       >
         <div>
           <label
@@ -223,7 +223,7 @@ const ReviewForm = ({
           </p>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid gap-3 md:grid-cols-2 md:gap-4">
           <div>
             <label
               htmlFor="customerName"
@@ -291,7 +291,7 @@ const ReviewForm = ({
           </div>
         </div>
 
-        <label className="inline-flex cursor-pointer items-center gap-3 rounded-full bg-white/65 px-4 py-2 text-sm font-bold text-[#6d5963]">
+        <label className="inline-flex min-h-10 cursor-pointer items-center gap-2.5 rounded-full bg-white/65 px-3 py-2 text-sm font-bold text-[#6d5963] sm:min-h-11 sm:gap-3 sm:px-4">
           <input
             type="checkbox"
             checked={formData.isAnonymous}
@@ -310,7 +310,7 @@ const ReviewForm = ({
         <div>
           <span className="hipud-label">Rating</span>
 
-          <div className="mt-2 flex gap-2">
+          <div className="mt-2 flex gap-1.5 sm:gap-2">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
                 key={star}
@@ -322,7 +322,7 @@ const ReviewForm = ({
                 className="transition hover:scale-110"
               >
                 <Star
-                  size={34}
+                  size={26}
                   className={
                     star <= formData.rating
                       ? 'fill-amber-400 text-amber-400'
@@ -346,7 +346,7 @@ const ReviewForm = ({
             id="comment"
             name="comment"
             required
-            className="hipud-input mt-2 min-h-[130px]"
+            className="hipud-input mt-2 min-h-[88px] sm:min-h-[110px]"
             placeholder="Ceritakan rasa, packaging, pelayanan, atau pengalaman manismu bersama Hipud."
             value={formData.comment}
             onChange={(event) =>
@@ -361,7 +361,7 @@ const ReviewForm = ({
         <button
           type="submit"
           disabled={loadingSubmit}
-          className="hipud-btn inline-flex w-full items-center justify-center gap-2 py-4 font-black disabled:cursor-not-allowed disabled:opacity-60"
+          className="hipud-btn inline-flex min-h-11 w-full items-center justify-center gap-2 px-5 text-sm font-black disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-12 sm:text-base"
         >
           <Send size={18} />
 
