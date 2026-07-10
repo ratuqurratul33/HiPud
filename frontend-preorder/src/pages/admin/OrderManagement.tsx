@@ -65,9 +65,15 @@ const formatCurrency = (value: any) => {
   return `Rp ${isNaN(safeNum) ? 0 : safeNum.toLocaleString('id-ID')}`;
 };
 
+const BACKEND_URL =
+  import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const fullImageUrl = (imageUrl: string | null) => {
   if (!imageUrl) return '';
-  return imageUrl.startsWith('http') ? imageUrl : `http://localhost:5000${imageUrl}`;
+
+  return imageUrl.startsWith('http')
+    ? imageUrl
+    : `${BACKEND_URL}${imageUrl}`;
 };
 
 const orderPaymentStatus = (order: Order) => {

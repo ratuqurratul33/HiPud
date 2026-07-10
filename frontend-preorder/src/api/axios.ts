@@ -1,30 +1,47 @@
 import axios from 'axios';
 
-// Ini adalah alamat server backend Anda
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: `${API_BASE_URL}/api`,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('adminToken');
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('adminToken');
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
 
-  return config;
-});
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error.response?.status;
 
-    if ((status === 401 || status === 403) && window.location.pathname.startsWith('/admin')) {
+    const isAdminPage =
+      window.location.pathname.startsWith('/admin');
+
+    const isLoginPage =
+      window.location.pathname === '/admin/login';
+
+    if (
+      (status === 401 || status === 403) &&
+      isAdminPage
+    ) {
       localStorage.removeItem('adminToken');
       sessionStorage.removeItem('adminSessionUnlocked');
 
-      if (window.location.pathname !== '/admin/login') {
+      if (!isLoginPage) {
         window.location.replace('/admin/login');
       }
     }

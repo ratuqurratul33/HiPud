@@ -1,1 +1,1 @@
-ALTER TABLE `Product` DROP COLUMN `badge`;
+ALTER TABLE "Product" DROP COLUMN "badge";

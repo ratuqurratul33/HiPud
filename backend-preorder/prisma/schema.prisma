@@ -1,6 +1,7 @@
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -15,9 +16,9 @@ model Admin {
 }
 
 model Product {
-  id          Int         @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   name        String
-  description String      @db.Text
+  description String  @db.Text
   price       Float
   imageUrl    String?
 
@@ -26,40 +27,40 @@ model Product {
   poCloseDate DateTime?
 
   // Field baru untuk branding Hi Pud.
-  category    String?     @default("Mochi Daifuku")
+  category    String? @default("Mochi Daifuku")
   variant     String?
-  isActive    Boolean     @default(true) // tampil di daftar menu
-  isOrderable Boolean     @default(true) // bisa masuk keranjang / menu PO aktif
+  isActive    Boolean @default(true) // tampil di daftar menu
+  isOrderable Boolean @default(true) // bisa masuk keranjang / menu PO aktif
 
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @default(now()) @updatedAt
-  orderItems  OrderItem[]
-  reviews     Review[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @default(now()) @updatedAt
+  orderItems OrderItem[]
+  reviews    Review[]
 }
 
 model Order {
-  id             Int         @id @default(autoincrement())
-  invoiceNumber  String      @unique
+  id             Int    @id @default(autoincrement())
+  invoiceNumber  String @unique
   customerName   String
   whatsappNumber String
-  address        String      @db.Text
+  address        String @db.Text
 
   // Field baru untuk pilihan pickup/danus.
-  pickupMethod   String?     @default("pribadi")
+  pickupMethod   String?   @default("pribadi")
   pickupDate     DateTime?
   pickupTime     String?
-  pickupLocation String?     @db.Text
+  pickupLocation String?   @db.Text
   faculty        String?
-  notes          String?     @db.Text
+  notes          String?   @db.Text
 
-  totalAmount    Float
-  dpAmount       Float       @default(0)
-  status         String      @default("PENDING")
-  proofImage     String?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @default(now()) @updatedAt
-  items          OrderItem[]
-  payments       Payment[]
+  totalAmount Float
+  dpAmount    Float       @default(0)
+  status      String      @default("PENDING")
+  proofImage  String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @default(now()) @updatedAt
+  items       OrderItem[]
+  payments    Payment[]
 }
 
 model OrderItem {
@@ -86,7 +87,7 @@ model Payment {
 
 model Review {
   id            Int      @id @default(autoincrement())
-  invoiceNumber String?  // <-- TAMBAHAN BARU (Untuk mengunci ulasan)
+  invoiceNumber String? // <-- TAMBAHAN BARU (Untuk mengunci ulasan)
   productId     Int?
   customerName  String
   isAnonymous   Boolean  @default(false)

@@ -23,8 +23,16 @@ const formatDate = (value?: string | null) => {
   return new Date(value).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
 };
 
+const BACKEND_URL =
+  import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const productImage = (product: Product) => {
-  if (product.imageUrl) return product.imageUrl.startsWith('http') ? product.imageUrl : `http://localhost:5000${product.imageUrl}`;
+  if (product.imageUrl) {
+    return product.imageUrl.startsWith('http')
+      ? product.imageUrl
+      : `${BACKEND_URL}${product.imageUrl}`;
+  }
+
   return null;
 };
 

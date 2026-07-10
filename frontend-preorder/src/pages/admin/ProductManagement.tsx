@@ -55,9 +55,15 @@ const emptyForm: ProductFormState = {
   poCloseDate: '',
 };
 
+const BACKEND_URL =
+  import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const displayImage = (url?: string | null) => {
   if (!url) return '';
-  return url.startsWith('http') ? url : `http://localhost:5000${url}`;
+
+  return url.startsWith('http')
+    ? url
+    : `${BACKEND_URL}${url}`;
 };
 
 const dateInputValue = (value?: string | null) => {
