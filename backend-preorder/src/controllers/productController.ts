@@ -9,6 +9,8 @@ const parseOptionalBoolean = (value: unknown, defaultValue: boolean) => {
   return Boolean(value);
 };
 
+const JAKARTA_TIME_ZONE = 'Asia/Jakarta';
+
 const hasValidAdminToken = (req: Request) => {
   const authHeader = req.header('Authorization');
   const token = authHeader?.split(' ')[1];
@@ -36,24 +38,35 @@ const addDays = (date: Date, days: number) => {
 };
 
 const toDateString = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: JAKARTA_TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).formatToParts(date);
+
+  const year = parts.find((part) => part.type === 'year')?.value;
+  const month = parts.find((part) => part.type === 'month')?.value;
+  const day = parts.find((part) => part.type === 'day')?.value;
+
+  if (!year || !month || !day) return '';
   return `${year}-${month}-${day}`;
 };
 
 const formatDate = (date: Date) => date.toLocaleDateString('id-ID', {
+  timeZone: JAKARTA_TIME_ZONE,
   day: 'numeric',
   month: 'long',
   year: 'numeric'
 });
 
 const getScheduleStatus = (orderStartDate: Date, orderEndDate: Date) => {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const today = toDateString(new Date());
+  const startDate = toDateString(orderStartDate);
+  const endDate = toDateString(orderEndDate);
 
-  if (today < orderStartDate) return 'Akan Dibuka';
-  if (today > orderEndDate) return 'Ditutup';
+  if (today < startDate) return 'Akan Dibuka';
+  if (today > endDate) return 'Ditutup';
   return 'Aktif';
 };
 

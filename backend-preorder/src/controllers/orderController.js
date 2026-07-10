@@ -6,6 +6,7 @@ const DANUS_DELIVERY_TIME = '10:00-11:00';
 const STAND_KENCANA_TIME = 'Maksimal 08:00';
 const PRODUCTION_ADDRESS = 'Rumah produksi Hi Pud - Komplek Duta Family C3, Parakanmuncang';
 const STAND_KENCANA_ADDRESS = 'Stand Kencana - Jl. Teratai Raya Blok 9, depan Soto Rawon Kencana, Rancaekek';
+const JAKARTA_TIME_ZONE = 'Asia/Jakarta';
 const orderInclude = {
     items: {
         include: {
@@ -41,10 +42,35 @@ const addDays = (date, days) => {
 const maxDate = (dates) => new Date(Math.max(...dates.map((date) => date.getTime())));
 const minDate = (dates) => new Date(Math.min(...dates.map((date) => date.getTime())));
 const formatDate = (date) => date.toLocaleDateString('id-ID', {
+    timeZone: JAKARTA_TIME_ZONE,
     day: 'numeric',
     month: 'long',
     year: 'numeric'
 });
+const getJakartaDateString = (value) => {
+    if (!value)
+        return null;
+    if (typeof value === 'string') {
+        const match = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (match)
+            return `${match[1]}-${match[2]}-${match[3]}`;
+    }
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime()))
+        return null;
+    const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: JAKARTA_TIME_ZONE,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    }).formatToParts(date);
+    const year = parts.find((part) => part.type === 'year')?.value;
+    const month = parts.find((part) => part.type === 'month')?.value;
+    const day = parts.find((part) => part.type === 'day')?.value;
+    if (!year || !month || !day)
+        return null;
+    return `${year}-${month}-${day}`;
+};
 const buildBatchWindow = (products) => {
     const validWindows = products
         .map((product) => {
@@ -145,10 +171,13 @@ export const createOrder = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Ada produk yang tidak valid atau belum open order.' });
         }
         const batchWindow = await getActiveBatchWindow();
-        const today = parseDateOnly(new Date());
-        const selectedPickupDate = parseDateOnly(pickupDate);
+        const today = getJakartaDateString(new Date());
+        const selectedPickupDate = getJakartaDateString(pickupDate);
         if (!selectedPickupDate) {
             return res.status(400).json({ success: false, message: 'Format tanggal pengambilan tidak valid.' });
+        }
+        if (!today) {
+            return res.status(500).json({ success: false, message: 'Gagal membaca tanggal server.' });
         }
         if (selectedPickupDate <= today) {
             return res.status(400).json({
@@ -157,16 +186,15 @@ export const createOrder = async (req, res) => {
             });
         }
         if (batchWindow) {
-            if (today < batchWindow.orderStartDate || today > batchWindow.orderEndDate) {
+            const orderStartDate = getJakartaDateString(batchWindow.orderStartDate);
+            const orderEndDate = getJakartaDateString(batchWindow.orderEndDate);
+            if (!orderStartDate || !orderEndDate) {
+                return res.status(500).json({ success: false, message: 'Gagal membaca jadwal batch.' });
+            }
+            if (today < orderStartDate || today > orderEndDate) {
                 return res.status(400).json({
                     success: false,
                     message: `Pemesanan batch ini dibuka dari ${formatDate(batchWindow.orderStartDate)} sampai ${formatDate(batchWindow.orderEndDate)}.`
-                });
-            }
-            if (selectedPickupDate < batchWindow.readyStartDate || selectedPickupDate > batchWindow.readyEndDate) {
-                return res.status(400).json({
-                    success: false,
-                    message: `Tanggal pengambilan harus berada pada ${formatDate(batchWindow.readyStartDate)} sampai ${formatDate(batchWindow.readyEndDate)}.`
                 });
             }
         }
@@ -203,7 +231,7 @@ export const createOrder = async (req, res) => {
                         ? STAND_KENCANA_ADDRESS
                         : (address || PRODUCTION_ADDRESS),
                 pickupMethod,
-                pickupDate: selectedPickupDate,
+                pickupDate: new Date(`${selectedPickupDate}T00:00:00+07:00`),
                 pickupTime: pickupMethod === 'danus'
                     ? DANUS_DELIVERY_TIME
                     : pickupMethod === 'stand_kencana'
