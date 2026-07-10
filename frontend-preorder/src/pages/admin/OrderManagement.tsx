@@ -67,7 +67,7 @@ const formatCurrency = (value: any) => {
 
 const fullImageUrl = (imageUrl: string | null) => {
   if (!imageUrl) return '';
-  return imageUrl.startsWith('http') ? imageUrl : `http://localhost:5000${imageUrl}`;
+  return imageUrl.startsWith('http') ? imageUrl : `https://hi-pud.vercel.app/${imageUrl}`;
 };
 
 const orderPaymentStatus = (order: Order) => {

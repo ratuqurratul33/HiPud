@@ -57,7 +57,7 @@ const emptyForm: ProductFormState = {
 
 const displayImage = (url?: string | null) => {
   if (!url) return '';
-  return url.startsWith('http') ? url : `http://localhost:5000${url}`;
+  return url.startsWith('http') ? url : `https://hi-pud.vercel.app/${url}`;
 };
 
 const dateInputValue = (value?: string | null) => {

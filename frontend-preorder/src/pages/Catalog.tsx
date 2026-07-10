@@ -24,7 +24,7 @@ const formatDate = (value?: string | null) => {
 };
 
 const productImage = (product: Product) => {
-  if (product.imageUrl) return product.imageUrl.startsWith('http') ? product.imageUrl : `http://localhost:5000${product.imageUrl}`;
+  if (product.imageUrl) return product.imageUrl.startsWith('http') ? product.imageUrl : `https://hi-pud.vercel.app/${product.imageUrl}`;
   return null;
 };
 
