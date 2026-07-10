@@ -37,7 +37,7 @@ npm install
 npm run dev
 ```
 
-Frontend berjalan di `http://localhost:5173` dan backend di `http://localhost:5000`.
+Frontend berjalan di `http://localhost:5173` dan backend di `https://hi-pud.vercel.app/`.
 
 ## Catatan Git
 
