@@ -68,6 +68,7 @@ const Home = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [batchSchedule, setBatchSchedule] = useState<BatchSchedule | null>(null);
   const [scheduleLoading, setScheduleLoading] = useState(true);
+  const [showLocationMap, setShowLocationMap] = useState(false);
 
   useEffect(() => {
     const fetchSchedule = async () => {
@@ -308,13 +309,23 @@ const Home = () => {
                     <Navigation size={16} /> Info Lokasi
                   </a>
                 </div>
-                <iframe
-                  title="Peta lokasi Hipud"
-                  className="aspect-[4/3] max-h-[240px] w-full rounded-[1rem] border-0 md:aspect-[16/10] lg:max-h-[360px]"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src={googleMapsEmbedUrl}
-                />
+                {showLocationMap ? (
+                  <iframe
+                    title="Peta lokasi Hipud"
+                    className="aspect-[4/3] max-h-[240px] w-full rounded-[1rem] border-0 md:aspect-[16/10] lg:max-h-[360px]"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src={googleMapsEmbedUrl}
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setShowLocationMap(true)}
+                    className="grid aspect-[4/3] max-h-[240px] w-full place-items-center rounded-[1rem] border border-dashed border-[#f8dce8] bg-white/70 px-4 text-center text-sm font-black text-[#6d5963] transition hover:bg-white md:aspect-[16/10] lg:max-h-[360px]"
+                  >
+                    Tampilkan peta lokasi
+                  </button>
+                )}
               </div>
             </div>
           </div>
