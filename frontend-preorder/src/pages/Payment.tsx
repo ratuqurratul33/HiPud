@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { AlertCircle, CheckCircle, MessageCircle, Receipt, Upload } from 'lucide-react';
 import Swal from 'sweetalert2';
 import api from '../api/axios';
+import QRImage from '../assets/QR.png';
 
 const Payment = () => {
   const location = useLocation();
@@ -100,7 +101,7 @@ const Payment = () => {
               <div className="rounded-[1.2rem] bg-white/70 p-4 text-center sm:p-5">
                 <p className="mb-4 text-xs font-black uppercase tracking-[.2em] text-[#8a7c82]">Scan QRIS Berikut</p>
                 <div className="mx-auto grid h-36 w-36 place-items-center rounded-2xl bg-white shadow-inner sm:h-40 sm:w-40">
-                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=HIPUD-PREORDER-DP" alt="QRIS Hi Pud" className="h-28 w-28 sm:h-32 sm:w-32" />
+                  <img src={QRImage} alt="QRIS Hi Pud" className="h-28 w-28 object-contain sm:h-32 sm:w-32" />
                 </div>
                 <p className="mt-5 text-sm text-[#8a7c82]">Atau transfer manual ke:</p>
                 <p className="font-black text-[#3f2e35]">BCA 123-456-7890</p>
