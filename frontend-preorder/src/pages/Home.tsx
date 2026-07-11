@@ -7,12 +7,14 @@ import {
   Clock,
   HelpCircle,
   MapPin,
+  Menu,
   MessageCircle,
   Navigation,
   ShoppingBag,
   Sparkles,
   Store,
   Truck,
+  X,
 } from 'lucide-react';
 import Catalog from './Catalog';
 import CustomerReviews from '../components/CustomerReviews';
@@ -69,6 +71,7 @@ const Home = () => {
   const [batchSchedule, setBatchSchedule] = useState<BatchSchedule | null>(null);
   const [scheduleLoading, setScheduleLoading] = useState(true);
   const [showLocationMap, setShowLocationMap] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
     const fetchSchedule = async () => {
@@ -99,17 +102,22 @@ const Home = () => {
     setTimeout(() => scrollTo('jadwal'), 0);
   };
 
+  const goSection = (id: string) => {
+    setMobileNavOpen(false);
+    scrollTo(id);
+  };
+
   return (
     <main className="min-h-screen overflow-x-hidden text-[#3f2e35]">
       <nav className="sticky inset-x-0 top-0 z-50 border-b border-white/60 bg-white/82 backdrop-blur-2xl">
         <div className="hipud-container flex h-16 items-center justify-between px-4 sm:px-6 md:h-[4.75rem] md:px-10">
-          <button onClick={() => scrollTo('home')} className="pressable flex min-h-11 items-center gap-2 text-left md:gap-3">
+          <button onClick={() => goSection('home')} className="pressable flex min-h-11 items-center gap-2 text-left md:gap-3">
             <img src={hipudLogo} alt="Hipud Sweet and Fresh" className="h-10 w-auto object-contain md:h-12" />
             <span className="hidden text-xs font-bold uppercase tracking-[.18em] text-[#8a7c82] sm:inline">Homemade Mochi</span>
           </button>
           <div className="hidden items-center gap-5 text-sm font-bold text-[#6d5963] lg:flex">
             {navItems.map(([label, target]) => (
-              <button key={target} onClick={() => scrollTo(target)} className="min-h-11 transition hover:text-[#f48fb1]">
+              <button key={target} onClick={() => goSection(target)} className="min-h-11 transition hover:text-[#f48fb1]">
                 {label}
               </button>
             ))}
@@ -119,7 +127,48 @@ const Home = () => {
               <ShoppingBag size={20} className="text-[#964261]" />
               {cartCount > 0 && <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-[#f48fb1] px-1 text-[10px] font-black text-white">{cartCount}</span>}
             </button>
-            <button onClick={() => scrollTo('preorder')} className="hipud-btn pressable hidden min-h-11 items-center px-5 text-sm font-black md:inline-flex">Pesan Sekarang</button>
+            <button onClick={() => goSection('preorder')} className="hipud-btn pressable hidden min-h-11 items-center px-5 text-sm font-black md:inline-flex">Pesan Sekarang</button>
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen((open) => !open)}
+              aria-label={mobileNavOpen ? 'Tutup menu' : 'Buka menu'}
+              aria-expanded={mobileNavOpen}
+              className="pressable grid h-11 w-11 place-items-center rounded-[16px] bg-white/86 shadow-sm transition hover:bg-white lg:hidden"
+            >
+              {mobileNavOpen ? <X size={21} className="text-[#964261]" /> : <Menu size={21} className="text-[#964261]" />}
+            </button>
+          </div>
+        </div>
+        <div className={`lg:hidden ${mobileNavOpen ? 'block' : 'hidden'}`}>
+          <button
+            type="button"
+            aria-label="Tutup menu"
+            className="fixed inset-0 top-16 z-40 bg-[#3f2e35]/18"
+            onClick={() => setMobileNavOpen(false)}
+          />
+          <div className="absolute right-3 top-[4.35rem] z-50 w-[min(18rem,calc(100vw-1.5rem))] overflow-hidden rounded-[1.1rem] border border-white/70 bg-white/96 p-2 shadow-[0_18px_50px_rgba(63,46,53,0.16)] backdrop-blur-xl">
+            <div className="grid gap-1 text-sm font-black text-[#6d5963]">
+              {navItems.map(([label, target]) => (
+                <button
+                  key={target}
+                  type="button"
+                  onClick={() => goSection(target)}
+                  className="flex min-h-11 items-center rounded-[14px] px-3 text-left transition hover:bg-[#fff1f6] hover:text-[#964261]"
+                >
+                  {label}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileNavOpen(false);
+                  navigate('/checkout');
+                }}
+                className="hipud-btn pressable mt-1 flex min-h-11 items-center justify-center px-4 text-sm font-black"
+              >
+                Checkout
+              </button>
+            </div>
           </div>
         </div>
       </nav>
@@ -142,7 +191,7 @@ const Home = () => {
               Spesialis aneka mochi tersedia online, Stand Kencana, dan danus.
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2 sm:gap-4 md:max-w-xl">
-              <button onClick={() => scrollTo('preorder')} className="hipud-btn pressable inline-flex min-h-12 items-center justify-center gap-2 px-5 font-black"><ShoppingBag size={19} /> Quick Pre-Order</button>
+              <button onClick={() => scrollTo('steps')} className="hipud-btn pressable inline-flex min-h-12 items-center justify-center gap-2 px-5 font-black"><ShoppingBag size={19} /> Cara Memesan</button>
               <button onClick={() => scrollTo('menu')} className="hipud-outline-btn pressable inline-flex min-h-12 items-center justify-center px-5 font-black">Lihat Menu</button>
             </div>
           </div>
@@ -216,11 +265,16 @@ const Home = () => {
           </div>
           <div className="grid grid-cols-3 gap-1.5 sm:gap-3">
             {preorderSteps.map(([title, text], index) => (
-              <div key={title} className="glass-card rounded-[10px] p-2 sm:rounded-[1.2rem] sm:p-4">
+              <button
+                key={title}
+                type="button"
+                onClick={index === 0 ? () => scrollTo('jadwal') : undefined}
+                className={`glass-card rounded-[10px] p-2 text-left sm:rounded-[1.2rem] sm:p-4 ${index === 0 ? 'pressable transition hover:-translate-y-0.5 hover:bg-white/82' : 'cursor-default'}`}
+              >
                 <div className="mb-1.5 grid h-5 w-5 place-items-center rounded-full bg-[#f48fb1] text-[10px] font-black text-white sm:mb-3 sm:h-8 sm:w-8 sm:text-sm">{index + 1}</div>
                 <h3 className="font-display text-[10px] font-black leading-tight sm:text-sm md:text-base">{title}</h3>
                 <p className="mt-1 line-clamp-2 text-[9px] leading-tight text-[#8a7c82] sm:text-xs md:text-sm md:leading-relaxed">{text}</p>
-              </div>
+              </button>
             ))}
           </div>
           <p className="mt-2 rounded-[10px] bg-white/65 px-2 py-2 text-center text-[10px] font-bold text-[#8a7c82] sm:mt-4 sm:rounded-[1.25rem] sm:px-4 sm:py-3 sm:text-sm">
