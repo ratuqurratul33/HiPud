@@ -1,15 +1,37 @@
-# Hipud Website
+# Hipud Website 🍡
 
-Website pre-order Hipud dengan katalog produk, checkout DP, panel admin, dan sistem ulasan.
+A pre-order platform for Hipud, a homemade mochi business — from browsing the menu to DP payment and order tracking.
 
-## Struktur Project
+## Features
 
-- `frontend-preorder`: aplikasi React untuk customer dan admin.
-- `backend-preorder`: API Express, Prisma, dan MySQL.
+- Online pre-order with cart and DP (down payment) checkout
+- Batch/schedule system for online, stand, and danus orders
+- Customer review system with admin moderation
+- Admin dashboard for managing products, orders, and payments
+- Fully responsive, mobile-first UI
 
-## Menjalankan Project Lokal
+## Tech Stack
 
-### Backend
+- **Frontend:** React, TypeScript, Vite, Tailwind CSS
+- **Backend:** Node.js, Express, Prisma, PostgreSQL
+- **Deployment:** Vercel (frontend & backend as separate projects)
+
+## Project Purpose
+
+This repo is a monorepo separating a client SPA from a REST API backend, connected purely through HTTP. It focuses on a real-world pre-order workflow: batch-based production scheduling, DP payment verification, and role-based admin access — built with a typed full-stack (TypeScript end to end).
+
+## Notes
+
+- `frontend-preorder` and `backend-preorder` are deployed as separate Vercel projects, each with its own Root Directory setting.
+- Secrets (`.env`), `node_modules`, `dist`, and runtime uploads are excluded from the repo.
+
+## Preview
+
+Live site: [hipud-profile.vercel.app](https://hipud-profile.vercel.app/)
+
+## How to Build
+
+**Backend**
 
 ```bash
 cd backend-preorder
@@ -20,16 +42,7 @@ npx prisma migrate dev
 npm run dev
 ```
 
-Isi `.env` sesuai database lokal atau hosting:
-
-```env
-DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE_NAME"
-JWT_SECRET="change_this_secret"
-ADMIN_USERNAME="admin"
-ADMIN_PASSWORD="change_this_password"
-```
-
-### Frontend
+**Frontend**
 
 ```bash
 cd frontend-preorder
@@ -37,14 +50,4 @@ npm install
 npm run dev
 ```
 
-Frontend berjalan di `http://localhost:5173` dan backend di `https://hi-pud.vercel.app/`.
-
-## Catatan Git
-
-File rahasia dan file besar tidak ikut repo:
-
-- `.env`
-- `node_modules`
-- `dist`
-- file upload runtime di `backend-preorder/uploads`
-
+Frontend runs at `http://localhost:5173`, backend at `http://localhost:5000` (or your deployed API URL).
